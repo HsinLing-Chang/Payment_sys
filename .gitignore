@@ -1,0 +1,4 @@
+**/venv/
+requirements.txt
+**/.env
+**/db.sqlite3
