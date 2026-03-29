@@ -1,0 +1,31 @@
+syntax = "proto3";
+package orders;
+
+service OrdersService{
+    rpc CreateOrder (CreateOrderRequest) returns (CreateOrderResponse);
+}
+
+message CreateOrderRequestBody{
+    string idempotent_key = 1;  // UUID，由 client 產生，防重複提交
+    reserved 2; 
+    string user_id = 3;
+    int64 amount = 4;
+    // idempotent_key(client 需傳遞)
+}
+
+message CreateOrderRequest{
+    CreateOrderRequestBody body = 1;
+}
+
+message CreateOrderResponseBody{
+    string order_no = 1;
+    string status = 2;
+    string idempotent_key = 3;
+    int64 amount = 4;
+    string created_at = 5;
+    string message = 6; // 成功 或 失敗
+}
+
+message CreateOrderResponse{
+    CreateOrderResponseBody body = 1;
+}

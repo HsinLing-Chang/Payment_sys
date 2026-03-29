@@ -6,4 +6,4 @@ class OrdersConfig(AppConfig):
 
     def ready(self):
         from core.redis import get_redis_client
-        get_redis_client()
+        # get_redis_client()
