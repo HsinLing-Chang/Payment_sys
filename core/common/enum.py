@@ -9,6 +9,5 @@ class OrderStatus(Enum):
 
 
 class IdempKeyState(Enum):
-    Pending = "pending"
     Done = "done"
     Failed = "failed"

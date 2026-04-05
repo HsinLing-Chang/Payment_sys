@@ -1,43 +1,46 @@
-from dataclasses import dataclasses, asdict, is_dataclass, fields
+from dataclasses import dataclass, asdict, is_dataclass, fields
 import typing
 from datetime import datetime
+from google.protobuf.message import Message
+from google.protobuf.json_format import MessageToDict
 
 
 class AnyDataClass(typing.Protocol):
     pass
 
 
-# Baseclass
+@dataclass
 class BaseClass:
-    @classmethod
-    def load(cls, data: typing.Union[dict[str, typing.Any], AnyDataClass]):
+    def load(self, data: typing.Union[dict[str, typing.Any], AnyDataClass, Message]):
         if is_dataclass(data):
             data = asdict(data)
-        if isinstance(data, dict):
-            return TypeError("Invaild data type.")
+        elif isinstance(data, Message):
+            data = MessageToDict(data, preserving_proto_field_name=True)
+        if not isinstance(data, dict):
+            raise TypeError("Invaild data type.")
 
         # 避免傳入參數data與目標class欄位有不匹配的現象
-        for _f in fields(cls):
-            if _f not in data.keys():
+        for _f in fields(self):
+            if _f.name not in data.keys():
                 continue
             # 可優化其他型別
-            if isinstance(_f, BaseClass):
-                setattr(cls, _f.name,  _f.type().load(data[_f.name]))
-            setattr(cls, _f.name, data[_f.name])
-        return cls
+            if issubclass(_f.type, BaseClass):
+                setattr(self, _f.name,  _f.type().load(data[_f.name]))
+            setattr(self, _f.name, _f.type(data[_f.name]))
+        return self
 
-    def to_dict(cls):
-        return asdict(cls)
+    def to_dict(self):
+        return asdict(self)
 
 
-@dataclasses
+@dataclass
 class CreateOrder(BaseClass):
     idempotent_key: str = ""
     user_id: str = ""
     amount: int = 0
 
 
-@dataclasses
+@dataclass
 class CreateOrderResponse(BaseClass):
     order_no: str = ""
     status: str = ""

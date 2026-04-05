@@ -18,6 +18,7 @@ class PaymentOrders(BaseModel):
         unique=True,
         db_index=True,
     )
+    # transaction_id = models.CharField(max_length=32)
     user_id = models.CharField(max_length=32, db_index=True, null=False)
     amount = models.BigIntegerField()  # 訂單金額
     status = models.CharField(
@@ -33,12 +34,12 @@ class IdempotencyKey(BaseModel):
     order = models.OneToOneField(
         "PaymentOrders", on_delete=models.CASCADE, related_name="idem_key", null=True, blank=True)
     status = models.CharField(
-        max_length=32, default=IdempKeyState.Pending.value)
+        max_length=32, default=IdempKeyState.Done.value)
     # 傳入資料的hash值，確保retry資訊一致(client req)
     req_hash = models.CharField(max_length=64)
     snap_shot = models.JSONField(
         null=True, blank=True)  # 訂單(三方)回傳結果(third_party)
-    expired_at = models.DateTimeField(db_index=True)
+    expired_at = models.DateTimeField(db_index=True)  # 過期訂單定時清理
 
     # index => user_id, idem_key
 

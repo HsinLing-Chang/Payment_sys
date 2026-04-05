@@ -18,3 +18,5 @@ participant Third-party
     Third-party-->>Server: 非同步返回支付結果
     Server-->>MCH: 返回付款結果
 ```
+
+#先同步 #後練習非同步

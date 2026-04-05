@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import orders_pb2 as orders__pb2
+from . import orders_pb2 as orders__pb2
 
 GRPC_GENERATED_VERSION = '1.78.0'
 GRPC_VERSION = grpc.__version__
@@ -11,7 +11,8 @@ _version_not_supported = False
 
 try:
     from grpc._utilities import first_version_is_lower
-    _version_not_supported = first_version_is_lower(GRPC_VERSION, GRPC_GENERATED_VERSION)
+    _version_not_supported = first_version_is_lower(
+        GRPC_VERSION, GRPC_GENERATED_VERSION)
 except ImportError:
     _version_not_supported = True
 
@@ -35,10 +36,10 @@ class OrdersServiceStub(object):
             channel: A grpc.Channel.
         """
         self.CreateOrder = channel.unary_unary(
-                '/orders.OrdersService/CreateOrder',
-                request_serializer=orders__pb2.CreateOrderRequest.SerializeToString,
-                response_deserializer=orders__pb2.CreateOrderResponse.FromString,
-                _registered_method=True)
+            '/orders.OrdersService/CreateOrder',
+            request_serializer=orders__pb2.CreateOrderRequest.SerializeToString,
+            response_deserializer=orders__pb2.CreateOrderResponse.FromString,
+            _registered_method=True)
 
 
 class OrdersServiceServicer(object):
@@ -53,33 +54,35 @@ class OrdersServiceServicer(object):
 
 def add_OrdersServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'CreateOrder': grpc.unary_unary_rpc_method_handler(
-                    servicer.CreateOrder,
-                    request_deserializer=orders__pb2.CreateOrderRequest.FromString,
-                    response_serializer=orders__pb2.CreateOrderResponse.SerializeToString,
-            ),
+        'CreateOrder': grpc.unary_unary_rpc_method_handler(
+            servicer.CreateOrder,
+            request_deserializer=orders__pb2.CreateOrderRequest.FromString,
+            response_serializer=orders__pb2.CreateOrderResponse.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'orders.OrdersService', rpc_method_handlers)
+        'orders.OrdersService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('orders.OrdersService', rpc_method_handlers)
-
+    server.add_registered_method_handlers(
+        'orders.OrdersService', rpc_method_handlers)
 
  # This class is part of an EXPERIMENTAL API.
+
+
 class OrdersService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def CreateOrder(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+                    target,
+                    options=(),
+                    channel_credentials=None,
+                    call_credentials=None,
+                    insecure=False,
+                    compression=None,
+                    wait_for_ready=None,
+                    timeout=None,
+                    metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
